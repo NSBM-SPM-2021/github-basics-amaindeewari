@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,  } from '@angular/core';
+import { resetFakeAsyncZone } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { EditTodoDialogComponent } from '../edit-todo-dialog/edit-todo-dialog.component';
 import { DataService } from '../shared/data.service';
 import { Todo } from '../shared/todo.model';
 
@@ -11,20 +14,52 @@ import { Todo } from '../shared/todo.model';
 export class TodosComponent implements OnInit {
 
   todos!: Todo[]
+  showValidationErrors!: boolean
 
-  constructor( private dataService: DataService) { }
+
+  constructor( private dataService: DataService, private dialog:MatDialog) { }
 
   ngOnInit(): void {
     this.todos= this.dataService.getAllTodos()
+    
   }
 
-  onFormSubmit(form:NgForm){
+  onFormSubmit(form:NgForm) {
+    console.log("Form Submitted!");
+      
+      if (form.invalid)  return this.showValidationErrors = true
+      return this.dataService.addTodo(new Todo (form.value.text)) 
+      //this.showValidationErrors = false
+      //form.reset # problem here form.reset is inside the form html 
+      
+      
+
+  }
+ 
+  
+  toggelCompleted(todo:Todo)
+  {
+    todo.completed=!todo.completed;
+  }   
+
+  editTodo(todo:Todo)
+  {   
+    const index = this.todos.indexOf(todo)
+    let dialogRef = this.dialog.open(EditTodoDialogComponent, {
+      width: '700px',
+      data: todo
+    });
+    dialogRef.afterClosed().subscribe((result)=>{
+      if(result){
+        this.dataService.updateTodo(index,result)
+      }
+    })
     
-    console.log("FORM SUBMITTED")
-    console.log(form)
-    if (form.invalid) return alert("Form is Invalid")
-    this.dataService.addTodo(new Todo (form.value.text))
-    
+  }
+
+  deleteTodo(todo: Todo){
+    const index = this.todos.indexOf(todo)
+    this.dataService.deleteTodo(index)
   }
 
 }
