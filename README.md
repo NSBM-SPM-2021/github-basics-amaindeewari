@@ -1,5 +1,7 @@
 # AngularTodoApp
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/03c9a081-a080-4029-909d-e49885974b77/deploy-status)](https://app.netlify.com/sites/elated-leavitt-6b7990/deploys)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.1.
 
 ## Development server
